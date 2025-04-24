@@ -1,53 +1,53 @@
 package main
 
 import (
-	"bufio"
+	"AdventOfCode2024/utility"
 	"fmt"
-	"log"
-	"os"
-	"slices"
 	"strconv"
 	"strings"
 )
 
-type GlobalReport struct {
-	Reports   []SafetyReport
-	TotalSafe int
+func main() {
+	inputRows := utility.FileToStrSlice("./dayTwoInput.txt")
+	solutionProblemOne := problemOne(inputRows)
+	fmt.Println("The number of safety reports for day 2 problem 1 is: " + strconv.Itoa(solutionProblemOne))
 }
 
-type SafetyReport struct {
-	Safety bool
-	Rows   []IndividualState
-}
-
-type IndividualState struct {
-	Value int
-	State bool
-}
-
-func dayTwoProblemOne() {
-	var sSlice []string
-	file, err := os.Open("dayTwoInput1.txt")
-	if err != nil {
-		log.Fatalf("fail: %s", err)
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		sSlice = append(sSlice, line)
-	}
-	for _, value := range sSlice {
+func problemOne(rows []string) int {
+	sr := 0
+	for _, value := range rows {
 		split := strings.Split(value, " ")
-		var row []int
+		if validRow(split) {
+			sr++
+		}
 	}
+	return sr
 }
 
-func validRow(row []int) bool {
-	v := false
-	for i := 0; i < len(row); i++ {
+func validRow(row []string) bool {
+	v := true
+	asc, desc := false, false
 
+	for i := 1; i < len(row); i++ {
+		current, _ := strconv.Atoi(row[i])
+		previous, _ := strconv.Atoi(row[i-1])
+		diff := current - previous
+		if diff > 0 {
+			desc = true
+		} else if diff < 0 {
+			asc = true
+		} else {
+			return false
+		}
+		if desc && asc {
+			return false
+		}
+		if diff > 3 || diff < -3 {
+			return false
+		}
 	}
 	return v
-
 }
+
+// func problemTwo(row []string) int {
+// }
